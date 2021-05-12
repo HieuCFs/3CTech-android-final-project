@@ -85,7 +85,7 @@ class _HomeState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 18, right: 18, top: 18),
+      margin: EdgeInsets.only(top: 18),
       child: Column(
         children: [
           Text(
@@ -96,78 +96,132 @@ class _HomeState extends State<MyHomePage> {
                 fontSize: 20),
           ),
           Container(
-            margin: EdgeInsets.only(top: 18),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Stack(alignment: Alignment.topRight, children: [
-                  _PlayerCardState(players[0], 15),
-                  Container(
-                    margin: EdgeInsets.only(top: 16),
-                    child: Image.network(
-                      "https://image.flaticon.com/icons/png/128/3132/3132778.png",
-                      width: 40,
-                      height: 40,
-                    ),
-                  ),
-                ]),
-                _PlayerCardState(players[1]),
-                _PlayerCardState(players[2], 15),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 28),
-            child: Align(
-              child: Text(
-                "POPULAR",
-                style: TextStyle(color: Colors.black45, fontSize: 20),
-              ),
-              alignment: Alignment.centerLeft,
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 14),
-            padding: EdgeInsets.all(14),
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.all(Radius.circular(10))),
+            margin: EdgeInsets.only(top: 18, left: 18),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  flex: 32,
+                  child: Stack(
+                    alignment: Alignment.topRight,
                     children: [
-                      CustomTextHeader("Rank"),
-                      CustomTextHeader("User"),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.only(right: 15),
+                        child: _PlayerCardState(players[0], 15),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 18,right: 3),
+                          child: Image.network(
+                            "https://pngimage.net/wp-content/uploads/2018/06/1-prize-png-9.png",
+                            width: 37,
+                            height: 37,
+                          )),
                     ],
                   ),
-                  flex: 3,
                 ),
                 Expanded(
-                  child: Container(),
-                  flex: 4,
-                ),
+                    flex: 36,
+                    child: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(right: 15),
+                          width: double.infinity,
+                          child: _PlayerCardState(players[1]),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 4),
+                          child: Image.network(
+                            "https://pngimage.net/wp-content/uploads/2018/06/1-prize-png-9.png",
+                            width: 40,
+                            height: 40,
+                          ),
+                        ),
+                      ],
+                    )),
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomTextHeader("Rank"),
-                      CustomTextHeader("User"),
-                    ],
-                  ),
-                  flex: 3,
-                ),
+                    flex: 32,
+                    child: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(right: 18),
+                          child: _PlayerCardState(players[2], 15),
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(top: 18, right: 6),
+                            child: Image.network(
+                              "https://pngimage.net/wp-content/uploads/2018/06/1-prize-png-9.png",
+                              width: 37,
+                              height: 37,
+                            )),
+                      ],
+                    )),
               ],
             ),
           ),
           Expanded(
-              child: ListView.builder(
-                  itemCount: players.length - 3,
-                  itemBuilder: (context, i) {
-                    return _PlayerCardItem(players[i + 3], i + 4);
-                  })),
+              child: Container(
+            margin: EdgeInsets.only(left: 18, right: 18),
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 28),
+                  child: Align(
+                    child: Text(
+                      "POPULAR",
+                      style: TextStyle(color: Colors.black45, fontSize: 20),
+                    ),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 14),
+                  padding: EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomTextHeader("Rank"),
+                            CustomTextHeader("User"),
+                          ],
+                        ),
+                        flex: 3,
+                      ),
+                      Expanded(
+                        child: Container(),
+                        flex: 4,
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomTextHeader("Rank"),
+                            CustomTextHeader("User"),
+                          ],
+                        ),
+                        flex: 3,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: ListView.builder(
+                        itemCount: players.length - 3,
+                        itemBuilder: (context, i) {
+                          return _PlayerCardItem(players[i + 3], i + 4);
+                        })),
+              ],
+            ),
+          ))
         ],
       ),
     );
@@ -283,7 +337,6 @@ class _PlayerCardState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 15),
-      width: 110,
       height: 160,
       child: Container(
         margin: EdgeInsets.only(top: _marginTop),
