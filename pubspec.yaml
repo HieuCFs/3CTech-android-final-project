@@ -33,6 +33,7 @@ dependencies:
   rxdart: ^0.27.0
   flutter_search_bar: ^2.1.0
   loadmore: ^2.0.1
+  connectivity: ^3.0.3
 
 dev_dependencies:
   flutter_test:

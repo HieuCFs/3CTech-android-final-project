@@ -8,8 +8,8 @@ class UserBloc {
 
   Stream<ItemModel> get allMovies => _userFetcher.stream;
 
-  fetchUserList({String q = "a", int per_page = 15, int page = 0}) async {
-    ItemModel itemModel = await _repository.fetchUserList(q, per_page, page);
+  fetchUserList({String q = "a", int perPage = 15, int page = 0}) async {
+    ItemModel itemModel = await _repository.fetchUserList(q, perPage, page);
     _userFetcher.sink.add(itemModel);
   }
 

@@ -1,12 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'package:loadmore/loadmore.dart';
 import 'package:user_manager/src/blocs/user_bloc.dart';
 import 'package:user_manager/src/models/item_model.dart';
 
 class UserList extends StatefulWidget {
   final List<String> list = List.generate(10, (index) => "Texto $index");
   final List<String> recentList = [];
+  List<User> _users = [];
+  String query = "a";
+  int page = 1;
+  int totalItem = 0;
+  int limit = 15;
 
   @override
   UserListState createState() => UserListState();
@@ -14,7 +20,6 @@ class UserList extends StatefulWidget {
 
 class UserListState extends State<UserList> {
   SearchBar searchBar;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AppBar buildAppBar(BuildContext context) {
     return new AppBar(
@@ -23,8 +28,9 @@ class UserListState extends State<UserList> {
   }
 
   void onSubmitted(String value) {
-    print('You wrote $value!');
-    setState(() => bloc.fetchUserList(q : value));
+    widget.query = value;
+    widget._users.clear();
+    bloc.fetchUserList(q: widget.query, page: widget.page);
   }
 
   UserListState() {
@@ -44,7 +50,13 @@ class UserListState extends State<UserList> {
   @override
   void initState() {
     super.initState();
-    bloc.fetchUserList();
+    bloc.fetchUserList(q: widget.query, page: widget.page);
+    bloc.allMovies.listen((event) {
+      setState(() {
+        widget._users.addAll(event.items);
+        widget.totalItem = event.total_count;
+      });
+    });
   }
 
   @override
@@ -58,29 +70,48 @@ class UserListState extends State<UserList> {
     return Scaffold(
       backgroundColor: Colors.white54,
       appBar: searchBar.build(context),
-      body: StreamBuilder(
-        stream: bloc.allMovies,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return buildList(snapshot);
-          } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
-          return Center(child: CircularProgressIndicator());
-        },
+      body: buildList(),
+    );
+  }
+
+  Widget buildList() {
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: LoadMore(
+        isFinish: (widget.page * widget.limit) >= widget.totalItem,
+        onLoadMore: _loadMore,
+        child: ListView.builder(
+            itemCount: widget._users.length,
+            itemBuilder: (context, index) {
+              return userItem(widget._users[index]);
+            }),
+        whenEmptyLoad: false,
+        delegate: DefaultLoadMoreDelegate(),
+        textBuilder: DefaultLoadMoreTextBuilder.chinese,
       ),
     );
   }
 
-  Widget buildList(AsyncSnapshot<ItemModel> snapshot) {
-    return ListView.builder(
-        itemCount: snapshot.data.items.length,
-        itemBuilder: (context, index) {
-          return UserItem(snapshot.data.items[index]);
-        });
+  void load() {
+    bloc.fetchUserList(q: widget.query, page: widget.page);
   }
 
-  Widget UserItem(User user) {
+  Future<bool> _loadMore() async {
+    await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
+    widget.page = widget.page + 1;
+    load();
+    return true;
+  }
+
+  Future<void> _refresh() async {
+    await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
+    widget.query = 'a';
+    widget.page = 1;
+    widget._users.clear();
+    load();
+  }
+
+  Widget userItem(User user) {
     return Container(
       margin: EdgeInsets.only(right: 7, left: 7, top: 7),
       decoration: BoxDecoration(
@@ -95,12 +126,15 @@ class UserListState extends State<UserList> {
               backgroundImage: NetworkImage(user.avatar_url),
             ),
             Container(
-              margin: EdgeInsets.only(left: 15),
+                margin: EdgeInsets.only(left: 15),
                 child: Text(
-              user.login,
-              style: TextStyle(
-                  color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20),
-            ))
+                  user.login,
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                  maxLines: 2,
+                ))
           ],
         ),
       ),
